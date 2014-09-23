@@ -24,7 +24,7 @@
             <input type="text" name="${question.name}">
           </div>
           <div tal:repeat="answer question.children">
-            <input type="radio" name="${question.name}" value="${answer.title}">
+            <input tal:attributes="type question.question_type" name="${question.name}" value="${answer.title}">
             ${answer.title}
           </div>
         </li>

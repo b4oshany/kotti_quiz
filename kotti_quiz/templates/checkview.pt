@@ -24,7 +24,7 @@
         </p>
         <p class="wronganswer" tal:condition="not questioncorrect[question.name]">
           Leider falsch <br>
-          Die korrekte Antwort lautet: ${question.correctanswer}
+          Die korrekte Antwort lautet: ${question.correct_answer}
         </p>
       </li>
     </ol>

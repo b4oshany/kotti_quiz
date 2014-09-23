@@ -15,15 +15,14 @@
       <p>${context.title}</p>
       <ul>
         <li tal:repeat="answer answers">
-          <a href="${request.resource_url(answer)}/@@edit">
+          <a href="${request.resource_url(answer, '@@edit')}">
             ${answer.title}
           </a>
         </li>
-        <li>
-          <a href="${request.resource_url(context)}/add_answer">
-            Add new answer
-          </a>
       </ul>
+      <a class="btn btn-primary" href="${request.resource_url(context, 'add_answer')}">
+        Add new answer
+      </a>
     </form>
 
   </div>

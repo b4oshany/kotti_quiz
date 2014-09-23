@@ -3,6 +3,7 @@ from sqlalchemy import Column
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import Unicode
+from sqlalchemy import String
 
 from kotti_quiz import _
 
@@ -24,7 +25,8 @@ class Question(Content):
     """Question Content type."""
 
     id = Column(Integer, ForeignKey('contents.id'), primary_key=True)
-    correctanswer = Column(Unicode(256))
+    correct_answer = Column(Unicode(256))
+    question_type = Column(String())
 
     # change the type info to your needs
     type_info = Content.type_info.copy(

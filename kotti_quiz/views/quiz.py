@@ -11,7 +11,7 @@ from kotti.views.edit import ContentSchema
 from kotti.views.edit import EditFormView
 from pyramid.view import view_config
 from pyramid.view import view_defaults
-
+from deform.widget import RadioChoiceWidget
 
 from kotti_quiz import _
 from kotti_quiz.resources import Quiz
@@ -23,25 +23,35 @@ from kotti_quiz.views import BaseView
 class QuizSchema(ContentSchema):
     title = colander.SchemaNode(
         colander.String(),
-        title = u'Quiz Bezeichnung',
+        title=u'Quiz Bezeichnung',
         )
 
 
 class QuestionSchema(ContentSchema):
     title = colander.SchemaNode(
         colander.String(),
-        title = u'Question:',
+        title=u'Question:',
         )
-    correctanswer = colander.SchemaNode(
+    correct_answer = colander.SchemaNode(
         colander.String(),
-        title = u'Correct Answer:',
+        title=u'Correct Answer:',
+        missing=None,
+        default=colander.null
+        )
+    question_type = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf(["radio", "checkbox", "text"]),
+        widget=RadioChoiceWidget(values=[
+            ["radio", "singlechoice"],
+            ["checkbox", "multiplechoice"],
+            ["text", "freetext"]])
         )
 
 
 class AnswerSchema(ContentSchema):
     title = colander.SchemaNode(
         colander.String(),
-        title = u'Answering <Choice></Choice>:',
+        title=u'Answering Choice:',
         )
 
 
@@ -65,11 +75,15 @@ class QuestionAddForm(AddFormView):
 
 @view_config(name=Answer.type_info.add_view,
              permission='add',
-             renderer='kotti:templates/edit/node.pt',)
+             renderer='kotti_quiz:templates/answeradd.pt',)
 class AnswerAddForm(AddFormView):
     schema_factory = AnswerSchema
     add = Answer
     item_type = _(u"Answer")
+
+    @property
+    def success_url(self):
+        return self.request.resource_url(self.context)
 
 
 @view_config(name='edit',
@@ -119,7 +133,7 @@ class QuizView(BaseView):
             sumtotal += 1
             #import pdb; pdb.set_trace()
             if question.name in answers:
-                if question.correctanswer == answers[question.name]:
+                if question.correct_answer == answers[question.name]:
                     questioncorrect[question.name] = True
                     sumcorrect += 1
 
