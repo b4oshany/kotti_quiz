@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')">
+
+  <head tal:omit-tag="" metal:fill-slot="head-more">
+    <link rel="stylesheet" href="${request.static_url('kotti_quiz:static/style.css')}" type="text/css" />
+    <more tal:omit-tag="" metal:define-slot="head"></more>
+  </head>
+
+  <div metal:fill-slot="content" class="content">
+
+    <form>
+      <p>${context.title}</p>
+      <ul>
+        <li tal:repeat="answer answers">
+          <a href="${request.resource_url(answer)}/@@edit">
+            ${answer.title}
+          </a>
+        </li>
+        <li>
+          <a href="${request.resource_url(context)}/add_answer">
+            Add new answer
+          </a>
+      </ul>
+    </form>
+
+  </div>
+</html>

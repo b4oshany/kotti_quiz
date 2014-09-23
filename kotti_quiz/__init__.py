@@ -12,5 +12,7 @@ def includeme(config):
 def kotti_configure(settings):
 
     settings['kotti.includes'] += ' kotti_quiz'
-    settings['kotti.available_types'] += ' kotti_quiz.resources.ContentType'  # noqa
+    settings['kotti.available_types'] += ' kotti_quiz.resources.Quiz'  # noqa
+    settings['kotti.available_types'] += ' kotti_quiz.resources.Question' #noqa
+    settings['kotti.available_types'] += ' kotti_quiz.resources.Answer'
     settings['kotti.fanstatic.view_needed'] += ' kotti_quiz.fanstatic.kotti_quiz_group'  # noqa

@@ -7,22 +7,42 @@ from sqlalchemy import Unicode
 from kotti_quiz import _
 
 
-class ContentType(Content):
-    """This is your content type."""
+class Quiz(Content):
+    """Quiz Content type."""
 
-    # add your columns
     id = Column(Integer, ForeignKey('contents.id'), primary_key=True)
-    example_text = Column('example_text', Unicode(256))
 
-    # change the type info to your needs
     type_info = Content.type_info.copy(
-        name=u'ContentType',
-        title=_(u'Content Type'),
-        add_view=u'add_content_type',
+        name=u'Quiz',
+        title=_(u'Quiz'),
+        add_view=u'add_quiz',
         addable_to=[u'Document'],
         )
 
-    # adjust the __init__ method according to your columns
-    def __init__(self, example_text=u'', **kwargs):
-        super(ContentType, self).__init__(**kwargs)
-        self.example_text = example_text
+
+class Question(Content):
+    """Question Content type."""
+
+    id = Column(Integer, ForeignKey('contents.id'), primary_key=True)
+    correctanswer = Column(Unicode(256))
+
+    # change the type info to your needs
+    type_info = Content.type_info.copy(
+        name=u'Question',
+        title=_(u'Question'),
+        add_view=u'add_question',
+        addable_to=[u'Quiz'],
+        )
+
+
+class Answer(Content):
+    """Answer Content type."""
+
+    id = Column(Integer, ForeignKey('contents.id'), primary_key=True)
+
+    type_info = Content.type_info.copy(
+        name=u'Answer',
+        title=_(u'Answer'),
+        add_view=u'add_answer',
+        addable_to=[u'Question'],
+        )

@@ -14,37 +14,131 @@ from pyramid.view import view_defaults
 
 
 from kotti_quiz import _
-from kotti_quiz.resources import ContentType
+from kotti_quiz.resources import Quiz
+from kotti_quiz.resources import Question
+from kotti_quiz.resources import Answer
 from kotti_quiz.views import BaseView
 
 
-class ContentTypeSchema(ContentSchema):
-    example_text = colander.SchemaNode(colander.String())
+class QuizSchema(ContentSchema):
+    title = colander.SchemaNode(
+        colander.String(),
+        title = u'Quiz Bezeichnung',
+        )
 
 
-@view_config(name=ContentType.type_info.add_view,
+class QuestionSchema(ContentSchema):
+    title = colander.SchemaNode(
+        colander.String(),
+        title = u'Question:',
+        )
+    correctanswer = colander.SchemaNode(
+        colander.String(),
+        title = u'Correct Answer:',
+        )
+
+
+class AnswerSchema(ContentSchema):
+    title = colander.SchemaNode(
+        colander.String(),
+        title = u'Answering <Choice></Choice>:',
+        )
+
+
+@view_config(name=Quiz.type_info.add_view,
              permission='add',
              renderer='kotti:templates/edit/node.pt',)
-class ContentTypeAddForm(AddFormView):
-    schema_factory = ContentTypeSchema
-    add = ContentType
-    item_type = _(u"ContentType")
+class QuizAddForm(AddFormView):
+    schema_factory = QuizSchema
+    add = Quiz
+    item_type = _(u"Quiz")
+
+
+@view_config(name=Question.type_info.add_view,
+             permission='add',
+             renderer='kotti:templates/edit/node.pt',)
+class QuestionAddForm(AddFormView):
+    schema_factory = QuestionSchema
+    add = Question
+    item_type = _(u"Question")
+
+
+@view_config(name=Answer.type_info.add_view,
+             permission='add',
+             renderer='kotti:templates/edit/node.pt',)
+class AnswerAddForm(AddFormView):
+    schema_factory = AnswerSchema
+    add = Answer
+    item_type = _(u"Answer")
 
 
 @view_config(name='edit',
-             context=ContentType, permission='edit',
+             context=Quiz, permission='edit',
              renderer='kotti:templates/edit/node.pt')
-class ContentTypeEditForm(EditFormView):
-    schema_factory = ContentTypeSchema
+class QuizEditForm(EditFormView):
+    schema_factory = QuizSchema
 
 
-@view_defaults(context=ContentType)
-class ContentTypeView(BaseView):
-    """View for the Content Type """
+@view_config(name='edit',
+             context=Question, permission='edit',
+             renderer='kotti:templates/edit/node.pt')
+class QuestionEditForm(EditFormView):
+    schema_factory = QuestionSchema
+
+
+@view_config(name='edit',
+             context=Answer, permission='edit',
+             renderer='kotti:templates/edit/node.pt')
+class AnswerEditForm(EditFormView):
+    schema_factory = AnswerSchema
+
+
+@view_defaults(context=Quiz, permission="view")
+class QuizView(BaseView):
+    """View for Quiz Content Type"""
+
+    @view_config(name="view",
+                 request_method='GET',
+                 renderer='kotti_quiz:templates/quizview.pt')
+    def view_quiz(self):
+        questions = self.context.children
+        return {
+            'questions': questions,
+        }
+
+    @view_config(name='view',
+                 request_method='POST',
+                 renderer='kotti_quiz:templates/checkview.pt')
+    def check_answers(self):
+        questions = self.context.children
+        answers = self.request.POST
+        sumtotal = 0
+        sumcorrect = 0
+        questioncorrect = {question.name: False for question in questions}
+        for question in questions:
+            sumtotal += 1
+            #import pdb; pdb.set_trace()
+            if question.name in answers:
+                if question.correctanswer == answers[question.name]:
+                    questioncorrect[question.name] = True
+                    sumcorrect += 1
+
+        return {
+            'questions': questions,
+            'questioncorrect': questioncorrect,
+            'sumtotal': sumtotal,
+            'sumcorrect': sumcorrect,
+        }
+
+
+@view_defaults(context=Question)
+class QuestionView(BaseView):
+    """View for Question Content Type"""
 
     @view_config(name="view", permission="view",
-                 renderer='kotti_quiz:templates/view.pt')
-    def view_content_type(self):
+                 renderer='kotti_quiz:templates/questionview.pt')
+    def view_question(self):
+        answers = self.context.values()
         return {
-            'example_text': u'foo…',
+            'answers': answers,
         }
