@@ -2,12 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
-      metal:use-macro="api.macro('kotti:templates/view/master.pt')">
-
-  <head tal:omit-tag="" metal:fill-slot="head-more">
-    <link rel="stylesheet" href="${request.static_url('kotti_quiz:static/style.css')}" type="text/css" />
-    <more tal:omit-tag="" metal:define-slot="head"></more>
-  </head>
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')"
+      i18n:domain="kotti_quiz">
 
   <div metal:fill-slot="content" class="content">
 
@@ -20,7 +18,7 @@
           </a>
         </li>
       </ul>
-      <a class="btn btn-primary" href="${request.resource_url(context, 'add_answer')}">
+      <a class="btn btn-primary" href="${request.resource_url(context, 'add_answer')}" i18n:translate="" tal:condition="api.has_permission('add')">
         Add new answer
       </a>
     </form>

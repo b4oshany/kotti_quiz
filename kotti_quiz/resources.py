@@ -4,12 +4,16 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import Unicode
 from sqlalchemy import String
+from sqlalchemy import Boolean
 
 from kotti_quiz import _
+from kotti.interfaces import IDefaultWorkflow
+from zope.interface import implements
 
 
 class Quiz(Content):
     """Quiz Content type."""
+    implements(IDefaultWorkflow)
 
     id = Column(Integer, ForeignKey('contents.id'), primary_key=True)
 
@@ -41,6 +45,7 @@ class Answer(Content):
     """Answer Content type."""
 
     id = Column(Integer, ForeignKey('contents.id'), primary_key=True)
+    correct = Column(Boolean())
 
     type_info = Content.type_info.copy(
         name=u'Answer',

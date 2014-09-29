@@ -2,12 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
-      metal:use-macro="api.macro('kotti:templates/view/master.pt')">
-
-  <head tal:omit-tag="" metal:fill-slot="head-more">
-    <link rel="stylesheet" href="${request.static_url('kotti_quiz:static/style.css')}" type="text/css" />
-    <more tal:omit-tag="" metal:define-slot="head"></more>
-  </head>
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')"
+      i18n:domain="kotti_quiz">
 
   <div metal:fill-slot="content" class="content">
 
@@ -18,18 +16,18 @@
 
     <form action="${request.resource_url(context)}" method="POST">
       <ol>
-        <li tal:repeat="question questions">
+        <li tal:repeat="question context.children_with_permission(request)">
           ${question.title}
           <div tal:condition="not: question.children">
-            <input type="text" name="${question.name}">
+            <input type="text" name="${question.name}"/>
           </div>
           <div tal:repeat="answer question.children">
-            <input tal:attributes="type question.question_type" name="${question.name}" value="${answer.title}">
+            <input tal:attributes="type question.question_type" name="${question.name}" value="${answer.title}"/>
             ${answer.title}
           </div>
         </li>
       </ol>
-      <input type="submit" value="Check Answers">
+      <input type="submit" value="Check Answers" i18n:attributes="value"/>
     </form>
 
   </div>

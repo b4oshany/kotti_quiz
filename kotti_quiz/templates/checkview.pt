@@ -2,12 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
-      metal:use-macro="api.macro('kotti:templates/view/master.pt')">
-
-  <head tal:omit-tag="" metal:fill-slot="head-more">
-    <link rel="stylesheet" href="${request.static_url('kotti_quiz:static/style.css')}" type="text/css" />
-    <more tal:omit-tag="" metal:define-slot="head"></more>
-  </head>
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')"
+      i18n:domain="kotti_quiz">
 
   <div metal:fill-slot="content" class="content">
 
@@ -19,16 +17,16 @@
     <ol>
       <li tal:repeat="question questions">
         ${question.title}
-        <p class="rightanswer" tal:condition="questioncorrect[question.name]">
-          Antwort korrekt
+        <p class="rightanswer" tal:condition="questioncorrect[question.name]" i18n:translate="">
+          answer correct
         </p>
-        <p class="wronganswer" tal:condition="not questioncorrect[question.name]">
-          Leider falsch <br>
-          Die korrekte Antwort lautet: ${question.correct_answer}
+        <p class="wronganswer" tal:condition="not questioncorrect[question.name]" i18n:translate="">
+          wrong answer
         </p>
+        <p>${numbercorrect[question.name][0]}/${numbercorrect[question.name][1]}</p>
       </li>
     </ol>
-  Insgesamt: ${sumcorrect}/${sumtotal}
+    <span i18n:translate="">Total</span>: ${sumcorrect}/${sumtotal}
 
   </div>
 </html>
