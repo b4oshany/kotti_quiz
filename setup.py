@@ -17,7 +17,7 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 setup(
     name=project,
     version=version,
-    description="AddOn for Kotti",
+    description="Quiz Content Type for Kotti",
     long_description=README + '\n\n' + CHANGES,
     classifiers=[
         "Programming Language :: Python",
@@ -25,10 +25,10 @@ setup(
         "License :: Repoze Public License",
     ],
     keywords='kotti addon',
-    author='Andreas Kaiser',
-    author_email='disko@binary-punks.com',
-    url='http://pypi.python.org/pypi/',
-    license='bsd',
+    author='Sebastian Brass',
+    author_email='brass@xo7.de',
+    url='https://github.com/sbabrass/kotti_quiz',
+    license='BSD',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,

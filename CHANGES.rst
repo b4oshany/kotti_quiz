@@ -1,8 +1,7 @@
 Changelog
 =========
 
-0.1-dev (unreleased)
---------------------
+0.1
+---
 
-- Package created using templer
-  [Andreas Kaiser]
+- initial release
