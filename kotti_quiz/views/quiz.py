@@ -96,7 +96,7 @@ class AnswerAddForm(AddFormView):
     item_type = _(u"Answer")
 
     @property
-    def success_url(self):
+    def success_url(self):  # pragma: no cover
         return self.request.resource_url(self.context)
 
     def save_success(self, appstruct):
@@ -107,14 +107,14 @@ class AnswerAddForm(AddFormView):
             self.request.session.flash(
                 u'Cannot add answer to freetext question'.format(
                     self.context.title), 'error')
-            return HTTPFound(location=self.request.resource_url(self.context))
-        elif question_type == "radio":
+            raise HTTPFound(location=self.request.resource_url(self.context))
+        elif question_type == "radio" and appstruct['correct'] is True:
             for prevanswer in prevanswers:
                 if prevanswer.correct is True:
                     self.request.session.flash(
                         u'Question already has a correct answer'.format(
                             self.context.title), 'error')
-                    return HTTPFound(location=self.request.resource_url(
+                    raise HTTPFound(location=self.request.resource_url(
                         self.context))
         super(AnswerAddForm, self).save_success(appstruct)
 
@@ -125,16 +125,16 @@ class AnswerAddForm(AddFormView):
 class QuizEditForm(EditFormView):
     schema_factory = QuizSchema
 
-    def __init__(self, context, request, **kwargs):
-        super(QuizEditForm, self).__init__(context, request, **kwargs)
-        kotti_quiz_group.need()
-
 
 @view_config(name='edit',
              context=Question, permission='edit',
              renderer='kotti:templates/edit/node.pt')
 class QuestionEditForm(EditFormView):
     schema_factory = QuestionSchema
+
+    def __init__(self, context, request, **kwargs):
+        super(QuestionEditForm, self).__init__(context, request, **kwargs)
+        kotti_quiz_group.need()
 
 
 @view_config(name='edit',
@@ -157,53 +157,17 @@ class QuizView(BaseView):
     @view_config(name='view',
                  request_method='POST',
                  renderer='kotti_quiz:templates/checkview.pt')
-    def check_answers(self):
+    def check_answers(self):  # pragma: no cover
         questions = self.context.children
-        answers = self.request.POST
-        sumtotal = 0
-        sumcorrect = 0
-        questioncorrect = {question.name: False for question in questions}
-        numbercorrect = {question.name: [0, 0] for question in questions}
-        for question in questions:
-            if question.question_type == "text":
-                sumtotal += 1
-                numbercorrect[question.name][1] += 1
-                if question.name in answers:
-                    if question.correct_answer == answers[question.name]:
-                        questioncorrect[question.name] = True
-                        numbercorrect[question.name][0] += 1
-                        sumcorrect += 1
-            else:
-                answerchoices = question.children
-                # import pdb; pdb.set_trace()
-                for answerchoice in answerchoices:
-                    if answerchoice.correct is True:
-                        sumtotal += 1
-                        numbercorrect[question.name][1] += 1
-                        if question.question_type == "radio":
-                            if question.name in answers:
-                                if answerchoice.title == answers[
-                                        question.name]:
-                                    sumcorrect += 1
-                                    questioncorrect[question.name] = True
-                                    numbercorrect[question.name][0] = 1
-                        else:
-                            if question.name in answers:
-                                choices = self.request.POST.getall(
-                                    question.name)
-                                for choice in choices:
-                                    # import pdb; pdb.set_trace()
-                                    if answerchoice.title == choice:
-                                        sumcorrect += 1
-                                        questioncorrect[question.name] = True
-                                        numbercorrect[question.name][0] += 1
+        answers = {question.name: self.request.POST.getall(
+            question.name) for question in questions}
+        results = self.context.check_answers(questions, answers)
 
         return {
             'questions': questions,
-            'questioncorrect': questioncorrect,
-            'sumtotal': sumtotal,
-            'sumcorrect': sumcorrect,
-            'numbercorrect': numbercorrect,
+            'questioncorrect': results["questioncorrect"],
+            'sumtotal': results["sumtotal"],
+            'sumcorrect': results["sumcorrect"],
         }
 
 

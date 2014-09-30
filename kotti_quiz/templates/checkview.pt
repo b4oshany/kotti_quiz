@@ -17,13 +17,13 @@
     <ol>
       <li tal:repeat="question questions">
         ${question.title}
-        <p class="rightanswer" tal:condition="questioncorrect[question.name]" i18n:translate="">
+        <p class="rightanswer" tal:condition="questioncorrect[question.name][0]" i18n:translate="">
           answer correct
         </p>
-        <p class="wronganswer" tal:condition="not questioncorrect[question.name]" i18n:translate="">
+        <p class="wronganswer" tal:condition="not questioncorrect[question.name][0]" i18n:translate="">
           wrong answer
         </p>
-        <p>${numbercorrect[question.name][0]}/${numbercorrect[question.name][1]}</p>
+        <p>${questioncorrect[question.name][1][0]}/${questioncorrect[question.name][1][1]}</p>
       </li>
     </ol>
     <span i18n:translate="">Total</span>: ${sumcorrect}/${sumtotal}
